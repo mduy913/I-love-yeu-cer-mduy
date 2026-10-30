@@ -1,387 +1,255 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#05080d">
-  <title>MDUY | Access Panel</title>
-
-  <style>
-    :root {
-      --bg: #05080d;
-      --panel: #0a111b;
-      --cyan: #38e0f8;
-      --blue: #168cff;
-      --text: #effaff;
-      --muted: #8297aa;
-      --border: rgba(56, 224, 248, .22);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-      overflow-x: hidden;
-      color: var(--text);
-      background:
-        radial-gradient(ellipse at 50% 20%,
-          rgba(22, 140, 255, .12), transparent 55%),
-        var(--bg);
-      font-family: -apple-system, BlinkMacSystemFont,
-        "Segoe UI", sans-serif;
-    }
-
-    .ambient {
-      position: fixed;
-      width: 320px;
-      height: 320px;
-      border-radius: 50%;
-      background: rgba(56, 224, 248, .07);
-      filter: blur(90px);
-      pointer-events: none;
-      animation: float 7s ease-in-out infinite alternate;
-    }
-
-    .ambient.one {
-      top: -130px;
-      left: -100px;
-    }
-
-    .ambient.two {
-      right: -120px;
-      bottom: -150px;
-      background: rgba(22, 140, 255, .1);
-      animation-delay: -3s;
-    }
-
-    .panel {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 410px;
-      padding: 30px 24px 24px;
-      border: 1px solid var(--border);
-      border-radius: 22px;
-      background: linear-gradient(
-        150deg,
-        rgba(13, 24, 37, .97),
-        rgba(5, 10, 17, .98)
-      );
-      box-shadow:
-        0 25px 90px rgba(0, 0, 0, .45),
-        0 0 35px rgba(56, 224, 248, .055);
-      animation: appear .65s ease both;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 25px;
-    }
-
-    .brand-icon {
-      display: grid;
-      place-items: center;
-      width: 49px;
-      height: 49px;
-      border: 1px solid rgba(56, 224, 248, .5);
-      border-radius: 15px;
-      color: var(--cyan);
-      background: rgba(56, 224, 248, .07);
-      box-shadow: 0 0 24px rgba(56, 224, 248, .1);
-      font-size: 25px;
-      font-weight: 900;
-    }
-
-    .brand-name {
-      font-size: 26px;
-      font-weight: 900;
-      letter-spacing: 3px;
-    }
-
-    .brand-name span {
-      color: var(--cyan);
-    }
-
-    .subtitle {
-      margin-top: 5px;
-      color: var(--muted);
-      font-size: 11px;
-      letter-spacing: 2px;
-    }
-
-    .status {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 25px;
-      color: #a7bac9;
-      font-size: 12px;
-    }
-
-    .status-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--cyan);
-      box-shadow: 0 0 12px var(--cyan);
-      animation: pulse 1.8s infinite;
-    }
-
-    .heading {
-      margin-bottom: 9px;
-      text-align: center;
-      font-size: 23px;
-      font-weight: 800;
-    }
-
-    .description {
-      margin-bottom: 25px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.7;
-    }
-
-    .field-label {
-      display: block;
-      margin-bottom: 9px;
-      color: #cce7f1;
-      font-size: 12px;
-      font-weight: 750;
-      letter-spacing: 1px;
-    }
-
-    .input-wrap {
-      position: relative;
-      margin-bottom: 15px;
-    }
-
-    .key-input {
-      width: 100%;
-      height: 51px;
-      padding: 0 15px;
-      outline: none;
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      background: #060c14;
-      color: var(--text);
-      font: inherit;
-      font-size: 13px;
-      transition: .2s;
-    }
-
-    .key-input::placeholder {
-      color: #607487;
-    }
-
-    .key-input:focus {
-      border-color: var(--cyan);
-      box-shadow: 0 0 0 3px rgba(56, 224, 248, .08);
-    }
-
-    .unlock-btn {
-      position: relative;
-      width: 100%;
-      height: 49px;
-      overflow: hidden;
-      border: 0;
-      border-radius: 11px;
-      color: #031017;
-      background: linear-gradient(110deg, var(--cyan), var(--blue));
-      font-size: 13px;
-      font-weight: 900;
-      letter-spacing: 2px;
-      cursor: pointer;
-      transition: transform .2s, filter .2s, box-shadow .2s;
-      box-shadow: 0 7px 25px rgba(22, 140, 255, .15);
-    }
-
-    .unlock-btn:hover {
-      filter: brightness(1.12);
-      box-shadow: 0 7px 30px rgba(56, 224, 248, .22);
-    }
-
-    .unlock-btn:active {
-      transform: scale(.985);
-    }
-
-    .unlock-btn:disabled {
-      opacity: .65;
-      cursor: wait;
-    }
-
-    .message {
-      display: none;
-      margin-top: 14px;
-      padding: 11px;
-      border: 1px solid var(--border);
-      border-radius: 9px;
-      color: var(--cyan);
-      background: rgba(56, 224, 248, .05);
-      text-align: center;
-      font-size: 12px;
-      line-height: 1.6;
-    }
-
-    .message.show {
-      display: block;
-    }
-
-    .message.error {
-      color: #ff9292;
-      border-color: rgba(255, 100, 100, .3);
-      background: rgba(255, 80, 80, .05);
-    }
-
-    .divider {
-      height: 1px;
-      margin: 23px 0 17px;
-      background: linear-gradient(
-        90deg, transparent, var(--border), transparent
-      );
-    }
-
-    .footer {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      color: #607487;
-      font-size: 10px;
-      letter-spacing: .4px;
-    }
-
-    .footer strong {
-      color: #8ba8ba;
-      font-weight: 650;
-    }
-
-    @keyframes appear {
-      from { opacity: 0; transform: translateY(15px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes pulse {
-      50% { opacity: .45; box-shadow: 0 0 3px var(--cyan); }
-    }
-
-    @keyframes float {
-      from { transform: translate(0, 0); }
-      to { transform: translate(35px, 25px); }
-    }
-
-    @media (max-width: 420px) {
-      .panel { padding: 26px 19px 21px; }
-      .brand-name { font-size: 23px; }
-      .heading { font-size: 21px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🐍 Python File Runner</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+    min-height: 100vh;
+    padding: 30px 20px;
+    color: #fff;
+  }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  h1 {
+    text-align: center;
+    margin-bottom: 10px;
+    font-size: 2em;
+  }
+  .subtitle {
+    text-align: center;
+    opacity: 0.8;
+    margin-bottom: 30px;
+  }
+  .card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    padding: 25px;
+    margin-bottom: 20px;
+  }
+  .drop-zone {
+    border: 3px dashed rgba(255,255,255,0.4);
+    border-radius: 12px;
+    padding: 50px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .drop-zone:hover, .drop-zone.dragover {
+    border-color: #4ade80;
+    background: rgba(74,222,128,0.1);
+  }
+  .drop-zone .icon { font-size: 3em; margin-bottom: 10px; }
+  .drop-zone input { display: none; }
+  .file-name {
+    margin-top: 15px;
+    color: #4ade80;
+    font-weight: bold;
+  }
+  button {
+    width: 100%;
+    padding: 15px;
+    margin-top: 20px;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: #000;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(74,222,128,0.4); }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .output {
+    background: #0d1117;
+    border-radius: 12px;
+    padding: 20px;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.9em;
+    white-space: pre-wrap;
+    word-break: break-word;
+    max-height: 400px;
+    overflow-y: auto;
+    color: #c9d1d9;
+  }
+  .output .stdout { color: #7ee787; }
+  .output .stderr { color: #ff7b72; }
+  .output .meta { color: #79c0ff; margin-bottom: 10px; }
+  .status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.85em;
+    font-weight: bold;
+  }
+  .status.ok { background: #22c55e; color: #000; }
+  .status.err { background: #ef4444; }
+  .status.loading { background: #f59e0b; color: #000; }
+  .files-list {
+    list-style: none;
+  }
+  .files-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    font-size: 0.9em;
+  }
+  .files-list a {
+    color: #4ade80;
+    text-decoration: none;
+  }
+  .files-list a:hover { text-decoration: underline; }
+</style>
 </head>
-
 <body>
-  <div class="ambient one"></div>
-  <div class="ambient two"></div>
+<div class="container">
+  <h1>🐍 Python File Runner</h1>
+  <p class="subtitle">Upload file .py và xem kết quả chạy ngay trên web</p>
 
-  <main class="panel">
-    <header class="brand">
-      <div class="brand-icon">M</div>
-      <div>
-        <div class="brand-name">MDUY<span>.</span></div>
-        <div class="subtitle">ACCESS CONTROL PANEL</div>
-      </div>
-    </header>
-
-    <div class="status">
-      <span class="status-dot"></span>
-      <span id="statusText">ACCESS PANEL READY</span>
+  <div class="card">
+    <div class="drop-zone" id="dropZone">
+      <div class="icon">📄</div>
+      <div>Kéo thả file .py vào đây hoặc click để chọn</div>
+      <div class="file-name" id="fileName"></div>
+      <input type="file" id="fileInput" accept=".py">
     </div>
+    <button id="runBtn" disabled>▶️ Upload & Chạy</button>
+  </div>
 
-    <h1 class="heading">Welcome Back</h1>
-    <p class="description">
-      Enter your access key below to continue
-    </p>
+  <div class="card" id="resultCard" style="display:none;">
+    <h3 style="margin-bottom:15px;">📊 Kết quả</h3>
+    <div class="output" id="output"></div>
+  </div>
 
-    <form id="unlockForm">
-      <label class="field-label" for="accessKey">
-        ACCESS KEY
-      </label>
+  <div class="card">
+    <h3 style="margin-bottom:15px;">📁 File đã upload</h3>
+    <ul class="files-list" id="filesList">
+      <li style="justify-content:center; opacity:0.5;">Đang tải...</li>
+    </ul>
+  </div>
+</div>
 
-      <div class="input-wrap">
-        <input
-          id="accessKey"
-          class="key-input"
-          type="password"
-          placeholder="Enter your key..."
-          autocomplete="off"
-          spellcheck="false"
-          required
-        >
-      </div>
+<script>
+const dropZone = document.getElementById('dropZone');
+const fileInput = document.getElementById('fileInput');
+const fileName = document.getElementById('fileName');
+const runBtn = document.getElementById('runBtn');
+const resultCard = document.getElementById('resultCard');
+const output = document.getElementById('output');
+const filesList = document.getElementById('filesList');
 
-      <button class="unlock-btn" id="unlockBtn" type="submit">
-        UNLOCK
-      </button>
+let selectedFile = null;
 
-      <div class="message" id="message" role="status"></div>
-    </form>
+// ===== Chọn file =====
+dropZone.addEventListener('click', () => fileInput.click());
 
-    <div class="divider"></div>
+fileInput.addEventListener('change', (e) => {
+  if (e.target.files.length > 0) setFile(e.target.files[0]);
+});
 
-    <footer class="footer">
-      <span>POWERED BY <strong>MDUY</strong></span>
-      <span>SECURE ACCESS UI</span>
-    </footer>
-  </main>
+// ===== Kéo thả =====
+dropZone.addEventListener('dragover', (e) => {
+  e.preventDefault();
+  dropZone.classList.add('dragover');
+});
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+dropZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  dropZone.classList.remove('dragover');
+  if (e.dataTransfer.files.length > 0) setFile(e.dataTransfer.files[0]);
+});
 
-  <script>
-    const form = document.getElementById("unlockForm");
-    const keyInput = document.getElementById("accessKey");
-    const unlockBtn = document.getElementById("unlockBtn");
-    const message = document.getElementById("message");
-    const statusText = document.getElementById("statusText");
+function setFile(file) {
+  if (!file.name.endsWith('.py')) {
+    alert('Chỉ chấp nhận file .py!');
+    return;
+  }
+  selectedFile = file;
+  fileName.textContent = `✅ ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
+  runBtn.disabled = false;
+}
 
-    form.addEventListener("submit", function (event) {
-      event.preventDefault();
+// ===== Chạy file =====
+runBtn.addEventListener('click', async () => {
+  if (!selectedFile) return;
 
-      const key = keyInput.value.trim();
+  runBtn.disabled = true;
+  runBtn.textContent = '⏳ Đang chạy...';
+  resultCard.style.display = 'block';
+  output.innerHTML = '<span class="status loading">Đang xử lý...</span>';
 
-      message.className = "message";
-      message.textContent = "";
+  const formData = new FormData();
+  formData.append('file', selectedFile);
 
-      if (!key) {
-        showMessage("Please enter your access key.", true);
-        keyInput.focus();
-        return;
+  try {
+    const res = await fetch('/upload', { method: 'POST', body: formData });
+    const data = await res.json();
+
+    if (data.success) {
+      let html = '';
+      html += `<div class="meta">📄 ${data.filename} • ⏱ ${data.time} • Exit code: ${data.returncode}</div>`;
+
+      if (data.stdout) {
+        html += `<div class="stdout">──── STDOUT ────\n${escapeHtml(data.stdout)}</div>`;
+      }
+      if (data.stderr) {
+        html += `<div class="stderr">\n──── STDERR ────\n${escapeHtml(data.stderr)}</div>`;
+      }
+      if (!data.stdout && !data.stderr) {
+        html += '<div style="opacity:0.5;">(Không có output)</div>';
       }
 
-      /*
-       * Giao diện hiện tại chưa kết nối máy chủ xác thực.
-       * Không báo đăng nhập thành công khi chưa xác minh key.
-       * Hãy nối phần này với API đăng nhập hợp lệ của website.
-       */
-      statusText.textContent = "KEY ENTERED";
-      showMessage(
-        "Key đã được nhập. Cần kết nối API xác thực để đăng nhập.",
-        false
-      );
-    });
-
-    function showMessage(text, isError) {
-      message.textContent = text;
-      message.className = "message show" + (isError ? " error" : "");
+      output.innerHTML = html;
+      loadFiles();
+    } else {
+      output.innerHTML = `<span class="status err">LỖI</span>\n\n${escapeHtml(data.error)}`;
     }
-  </script>
+  } catch (err) {
+    output.innerHTML = `<span class="status err">LỖI MẠNG</span>\n\n${escapeHtml(err.message)}`;
+  } finally {
+    runBtn.disabled = false;
+    runBtn.textContent = '▶️ Upload & Chạy';
+  }
+});
+
+// ===== Danh sách file =====
+async function loadFiles() {
+  try {
+    const res = await fetch('/files');
+    const files = await res.json();
+    if (files.length === 0) {
+      filesList.innerHTML = '<li style="justify-content:center; opacity:0.5;">Chưa có file nào</li>';
+      return;
+    }
+    filesList.innerHTML = files.map(f => `
+      <li>
+        <span>📄 ${escapeHtml(f.name)} <small style="opacity:0.6;">(${(f.size/1024).toFixed(1)} KB)</small></span>
+        <a href="/download/${encodeURIComponent(f.name)}">⬇️ Tải</a>
+      </li>
+    `).join('');
+  } catch (e) {
+    filesList.innerHTML = '<li style="opacity:0.5;">Không tải được danh sách</li>';
+  }
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+  }[c]));
+}
+
+loadFiles();
+</script>
 </body>
 </html>
